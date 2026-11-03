@@ -1,30 +1,31 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:pizzaria/main.dart';
+import 'package:pizzaria/about.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const PizzariaApp());
+  testWidgets('Navigates to About page and back to Home', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        routes: {
+          '/': (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.pushNamed(context, '/about'),
+                child: const Text('Open About'),
+              ),
+            ),
+          ),
+          '/about': (context) => const AboutPage(),
+        },
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.tap(find.text('Open About'));
+    await tester.pumpAndSettle();
+    expect(find.text('About Us'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('Back to Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open About'), findsOneWidget);
   });
 }

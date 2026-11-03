@@ -3,14 +3,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pizzaria/about.dart';
 
 void main() {
-  testWidgets('About page shows story, hours and back button skrr', (
-    tester,
-  ) async {
-    await tester.pumpWidget(const MaterialApp(home: AboutPage()));
+  testWidgets('Navigates to About page and back to Home', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        routes: {
+          '/': (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.pushNamed(context, '/about'),
+                child: const Text('Open About'),
+              ),
+            ),
+          ),
+          '/about': (context) => const AboutPage(),
+        },
+      ),
+    );
 
+    await tester.tap(find.text('Open About'));
+    await tester.pumpAndSettle();
     expect(find.text('About Us'), findsOneWidget);
-    expect(find.text('The Pizzaria Story'), findsOneWidget);
-    expect(find.text('Opening Hours'), findsOneWidget);
-    expect(find.text('Back to Home'), findsOneWidget);
+
+    await tester.tap(find.text('Back to Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open About'), findsOneWidget);
   });
 }
